@@ -1,6 +1,4 @@
 node_modules
-tests/*.json
 
-# editor and IDE remnants
-*~
-.idea/
+.idea
+.DS_Store
