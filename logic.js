@@ -183,6 +183,14 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       return obj[method].apply(obj, args);
     },
     // OnSign specific operators
+    '><': function(loc, region) {
+      // Checks if a location object is inside a georegion object
+      if (region.path) {
+        return jsonLogic.isWithinPolygon_(region, loc);
+      } else {
+        return jsonLogic.isWithinCircle_(region, loc);
+      }
+    },
     '*=': function(a, b) {
       // Startswith
       return a.substr(0, b.length) === b;
@@ -191,6 +199,73 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       // Endswith
       return a.substr(-b.length, b.length) === b;
     }
+  };
+
+  jsonLogic.isWithinPolygon_ = function(polygon, point) {
+    if (!polygon.path) return false;
+    // The array representing the polygon represents each point with an array.
+    // We map it to use `latitude` and `longitude` instead.
+    var mappedPolygon = polygon.path.map(function(point) {return {latitude: point[0], longitude: point[1]};});
+
+    var crossings = 0;
+    for (var i = 0; i < mappedPolygon.length; i++) {
+      // Build a rect with the next two points of the polygon
+      var a = mappedPolygon[i];
+      // When we reach the last iteration, we need to connect it back to the first point.
+      var b = mappedPolygon[(i+1 == mappedPolygon.length) ? 0 : i+1];
+      // Check if the virtual ray intercepts this side of the polygon
+      if (this.rayCrossesSegment_(point, a, b)) crossings++;
+    }
+    // If the number of crossings is odd, then the point is inside the polygon.
+    return (crossings % 2 == 1);
+  };
+
+  jsonLogic.isWithinCircle_ = function(circle, point) {
+    if (!circle || !point) return false;
+
+    // This method uses the [Haversine formula](http://en.wikipedia.org/wiki/Haversine_formula).
+    var R = 6371;
+    var dLat = (point.latitude - circle.latitude) * (Math.PI / 180);
+    var dLon = (point.longitude - circle.longitude) * (Math.PI / 180);
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2);
+    a += Math.cos(circle.latitude * (Math.PI / 180)) * Math.cos(point.latitude * (Math.PI / 180));
+    a *= Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    // Get the distance in `meters`
+    var distance = R * c * 1000;
+
+    return (distance <= circle.radius);
+  };
+
+  jsonLogic.rayCrossesSegment_ = function(point, a, b) {
+    if (!point || !a || !b) return false;
+
+    var px = point.longitude;
+    var py = point.latitude;
+    var ax = a.longitude;
+    var ay = a.latitude;
+    var bx = b.longitude;
+    var by = b.latitude;
+    if (ay > by) {
+      ax = b.longitude;
+      ay = b.latitude;
+      bx = a.longitude;
+      by = a.latitude;
+    }
+
+    if (px < 0) px += 360;
+    if (ax < 0) ax += 360;
+    if (bx < 0) bx += 360;
+
+    if (py == ay || py == by) py += 0.00000001;
+    if ((py > by || py < ay) || (px >= Math.max(ax, bx))) return false;
+    if (px < Math.min(ax, bx)) return true;
+
+    var red = (ax != bx) ? ((by - ay) / (bx - ax)) : Infinity;
+    var blue = (ax != px) ? ((py - ay) / (px - ax)) : Infinity;
+
+    return (blue >= red);
   };
 
   jsonLogic.is_logic = function(logic) {
