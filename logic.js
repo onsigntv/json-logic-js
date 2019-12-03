@@ -51,9 +51,11 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       return a !== b;
     },
     '>': function(a, b) {
+      if (b === null) return false;
       return a > b;
     },
     '>=': function(a, b) {
+      if (b === null) return false;
       return a >= b;
     },
     '<': function(a, b, c) {

@@ -1,0 +1,18 @@
+[
+    "Null tests",
+    [{">=": [2, null]}, {}, false],
+    [{">": [2, null]}, {}, false],
+    [{"<=": [2, null]}, {}, false],
+    [{"<": [2, null]}, {}, false],
+    [{"in": [null, [1, 2, 3]]}, {}, false],
+    [{"==": [null, false]}, {}, false],
+    [{"===": [null, false]}, {}, false],
+    [{"!=": [null, false]}, {}, true],
+    [{"!==": [null, false]}, {}, true],
+    [{"!": null}, {}, true],
+    [{"!!": null}, {}, false],
+    "Empty array tests",
+    [{"!": []}, {}, true],
+    [{"!!": []}, {}, false],
+    "EOF"
+]

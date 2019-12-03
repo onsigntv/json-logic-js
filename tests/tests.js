@@ -25,7 +25,7 @@ var parse_and_iterate = function(local_file, description, runner) {
   });
 };
 
-parse_and_iterate('tests.json', 'applies() tests', function(test) {
+function basic_test(test) {
   var rule = test[0];
   var data = test[1];
   var expected = test[2];
@@ -35,7 +35,11 @@ parse_and_iterate('tests.json', 'applies() tests', function(test) {
     expected,
     `jsonLogic.apply(${JSON.stringify(rule)},${JSON.stringify(data)}) === ${JSON.stringify(expected)}`
   );
-});
+}
+
+parse_and_iterate('tests.json', 'applies() tests', basic_test);
+parse_and_iterate('onsign_op.json', 'onsign_op() tests', basic_test);
+parse_and_iterate('onsign_extra.json', 'onsign_extra() tests', basic_test);
 
 parse_and_iterate('rule_like.json', 'rule_like() tests', function(test) {
   var rule = test[0];
@@ -46,18 +50,6 @@ parse_and_iterate('rule_like.json', 'rule_like() tests', function(test) {
     jsonLogic.rule_like(rule, pattern),
     expected,
     `jsonLogic.apply(${JSON.stringify(rule)},${JSON.stringify(pattern)}) === ${JSON.stringify(expected)}`
-  );
-});
-
-parse_and_iterate('onsign.json', 'onsign() tests', function(test) {
-  var rule = test[0];
-  var data = test[1];
-  var expected = test[2];
-
-  QUnit.assert.deepEqual(
-    jsonLogic.apply(rule, data),
-    expected,
-    `jsonLogic.apply(${JSON.stringify(rule)},${JSON.stringify(data)}) === ${JSON.stringify(expected)}`
   );
 });
 
