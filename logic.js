@@ -181,6 +181,15 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     },
     method: function(obj, method, args) {
       return obj[method].apply(obj, args);
+    },
+    // OnSign specific operators
+    '*=': function(a, b) {
+      // Startswith
+      return a.substr(0, b.length) === b;
+    },
+    '=*': function(a, b) {
+      // Endswith
+      return a.substr(-b.length, b.length) === b;
     }
   };
 

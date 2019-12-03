@@ -1,0 +1,15 @@
+[
+    "Startswith test",
+    [{"*=": ["This is a sample test", "This is a"]}, {}, true],
+    [{"*=": ["This is a sample test", "This is not a"]}, {}, false],
+    [{"*=": ["This is a sample test", "sample test"]}, {}, false],
+    [{"*=": ["This is a sample test", ""]}, {}, true],
+    [{"*=": ["😀 emoji test 😀", "😀 emoji"]}, {}, true],
+    "Endswith test",
+    [{"=*": ["This is a sample test", "a sample test"]}, {}, true],
+    [{"=*": ["This is a sample test", "not a sample test"]}, {}, false],
+    [{"=*": ["This is a sample test", "This is a"]}, {}, false],
+    [{"=*": ["This is a sample test", ""]}, {}, true],
+    [{"=*": ["😀 emoji test 😀", "test 😀"]}, {}, true],
+    "EOF"
+  ]

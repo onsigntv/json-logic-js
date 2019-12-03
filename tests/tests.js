@@ -49,6 +49,18 @@ parse_and_iterate('rule_like.json', 'rule_like() tests', function(test) {
   );
 });
 
+parse_and_iterate('onsign.json', 'onsign() tests', function(test) {
+  var rule = test[0];
+  var data = test[1];
+  var expected = test[2];
+
+  QUnit.assert.deepEqual(
+    jsonLogic.apply(rule, data),
+    expected,
+    `jsonLogic.apply(${JSON.stringify(rule)},${JSON.stringify(data)}) === ${JSON.stringify(expected)}`
+  );
+});
+
 QUnit.test('Bad operator', function(assert) {
   assert.throws(function() {
     jsonLogic.apply({ fubar: [] });
