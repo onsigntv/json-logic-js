@@ -4,15 +4,96 @@
     [{">": [2, null]}, {}, false],
     [{"<=": [2, null]}, {}, false],
     [{"<": [2, null]}, {}, false],
+
+    [{">=": [null, 2]}, {}, false],
+    [{">": [null, 2]}, {}, false],
+    [{"<=": [null, 2]}, {}, false],
+    [{"<": [null, 2]}, {}, false],
+
+    [{">=": [null, null]}, {}, false],
+    [{">": [null, null]}, {}, false],
+    [{"<=": [null, null]}, {}, false],
+    [{"<": [null, null]}, {}, false],
+
     [{"in": [null, [1, 2, 3]]}, {}, false],
+    [{"in": [1, null]}, {}, false],
+    [{"in": [null, null]}, {}, false],
+    [{"in": [null, [null]]}, {}, true],
+
     [{"==": [null, false]}, {}, false],
     [{"===": [null, false]}, {}, false],
     [{"!=": [null, false]}, {}, true],
     [{"!==": [null, false]}, {}, true],
+
     [{"!": null}, {}, true],
     [{"!!": null}, {}, false],
+
+    [{"+": [1]}, {}, 1],
+    [{"+": [null, 1]}, {}, 1],
+    [{"+": [1, null]}, {}, 1],
+    [{"+": [null, null]}, {}, 0],
+
+    [{"-": [1]}, {}, 1],
+    [{"-": [null, 1]}, {}, -1],
+    [{"-": [-1, null]}, {}, -1],
+    [{"-": [null, null]}, {}, 0],
+
+    [{"*": [1]}, {}, 1],
+    [{"*": [null, 1]}, {}, 0],
+    [{"*": [1, null]}, {}, 0],
+    [{"*": [null, null]}, {}, 0],
+
+    [{"/": [1]}, {}, 1],
+    [{"/": [null, 1]}, {}, 0],
+    [{"/": [1, null]}, {}, 0],
+    [{"/": [null, null]}, {}, 0],
+
+    [{"%": [null, 1]}, {}, 0],
+    [{"%": [1, null]}, {}, 0],
+    [{"%": [null, null]}, {}, 0],
+
+    [{"*=": [null, "text"]}, {}, false],
+    [{"*=": ["text", null]}, {}, false],
+    [{"*=": [null, null]}, {}, false],
+
+    [{"=*": [null, "text"]}, {}, false],
+    [{"=*": ["text", null]}, {}, false],
+    [{"=*": [null, null]}, {}, false],
+
+    [
+        {"><": [null, {"var": "geo"}]},
+        {"geo": {"path": [[0, 0], [2, 0], [1, 1]]}},
+        false
+    ],
+    [
+        {"><": [{"var": "loc"}, {"var": "geo"}]},
+        {"loc": [1, null], "geo": {"path": [[0, 0], [2, 0], [1, 1]]}},
+        false
+    ],
+    [
+        {"><": [{"var": "loc"}, {"var": "geo"}]},
+        {"loc": [null, 1], "geo": {"path": [[0, 0], [2, 0], [1, 1]]}},
+        false
+    ],
+    [
+        {"><": [{"var": "loc"}, {"var": "geo"}]},
+        {"loc": [null, null], "geo": {"path": [[0, 0], [2, 0], [1, 1]]}},
+        false
+    ],
+    [
+        {"><": [{"var": "loc"}, null]},
+        {"loc": [1, 1]},
+        false
+    ],
+
     "Empty array tests",
     [{"!": []}, {}, true],
     [{"!!": []}, {}, false],
+
+    "Multiple values on operators test",
+    [{"+": [3, -5, 7, 11]}, {}, 16],
+    [{"-": [3, -5, 7, 11]}, {}, -10],
+    [{"*": [3, -5, 7, 11]}, {}, -1155],
+    [{"/": [1000, -100, 5, 2]}, {}, -1],
     "EOF"
 ]

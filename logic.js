@@ -42,9 +42,11 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       return a >= b;
     },
     '<': function(a, b, c) {
+      if (a === null) return false;
       return c === undefined ? a < b : a < b && b < c;
     },
     '<=': function(a, b, c) {
+      if (a === null) return false;
       return c === undefined ? a <= b : a <= b && b <= c;
     },
     '!!': function(a) {
@@ -54,6 +56,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       return !truthy(a);
     },
     '%': function(a, b) {
+      if (b === null) return 0;
       return a % b;
     },
     in: function(a, b) {
@@ -72,28 +75,25 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       return String(source).substr(start, end);
     },
     '+': function() {
-      return Array.prototype.reduce.call(
-        arguments,
-        function(a, b) {
-          return parseFloat(a, 10) + parseFloat(b, 10);
-        },
-        0
-      );
+      return Array.prototype.reduce.call(arguments, function(a, b) {
+        return parseFloat(+a, 10) + parseFloat(+b, 10);
+      }, 0);
     },
     '*': function() {
       return Array.prototype.reduce.call(arguments, function(a, b) {
-        return parseFloat(a, 10) * parseFloat(b, 10);
+        return parseFloat(+a, 10) * parseFloat(+b, 10);
       });
     },
-    '-': function(a, b) {
-      if (b === undefined) {
-        return -a;
-      } else {
-        return a - b;
-      }
+    '-': function() {
+      return Array.prototype.reduce.call(arguments, function(a, b) {
+        return parseFloat(+a, 10) - parseFloat(+b, 10);
+      });
     },
-    '/': function(a, b) {
-      return a / b;
+    '/': function() {
+      return Array.prototype.reduce.call(arguments, function(a, b) {
+        if (b === null) return 0;
+        return parseFloat(+a, 10) / parseFloat(+b, 10);
+      });
     },
     min: function() {
       return Math.min.apply(this, arguments);
@@ -166,6 +166,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     // OnSign specific operators
     '><': function(loc, region) {
       // Checks if a coordinate is inside a georegion object
+      if (loc === null || region === null) return false;
       if (region.path) {
         return isWithinPolygon(loc, region);
       } else {
@@ -174,10 +175,12 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     },
     '*=': function(a, b) {
       // Startswith
+      if (a === null || b === null) return false;
       return a.substr(0, b.length) === b;
     },
     '=*': function(a, b) {
       // Endswith
+      if (a === null || b === null) return false;
       return a.substr(-b.length, b.length) === b;
     }
   };

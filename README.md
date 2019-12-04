@@ -120,7 +120,9 @@ If you want to use JsonLogic *and* support deprecated browsers, you could easily
 
 ## Differences from orignal json-logic
 
-This repository removes a lot of unneded code and add some extra specific operators
+This repository removes a lot of unneded code and add some extra specific operators, besides doing some overrall improvements to the code.
+
+### New Operators
 
 The new operators are:
 
@@ -128,4 +130,13 @@ The new operators are:
 - `*=`: Checks whether the first argument starts with the second argument
 - `=*`: Checks whether the first argument ends with the second argument
 
-We also added some extra checks to guard ourselves against null data.
+### Improvements
+
+The main repository had a lot of issues regarding `null` values, and some operators were really inconsistent.
+This repo makes sure that:
+
+- When doing comparisons with `null`, we will always return `false`
+- When doing operations with `null`, we will always consider null as `0`
+- `0` will be returned when a value is divided by `0`. This matches well with the second change
+- All operations now support an arbitrary ammount of arguments (excluding `%`)
+- Calling operations with only 1 value returns that value. Ex.: `{"-": [1]} === 1` (excluding `%`)
