@@ -13,27 +13,10 @@ http://ricostacruz.com/cheatsheets/umdjs.html
   }
 })(this, function() {
   'use strict';
-  /* globals console:false */
-
   if (!Array.isArray) {
     Array.isArray = function(arg) {
       return Object.prototype.toString.call(arg) === '[object Array]';
     };
-  }
-
-  /**
-   * Return an array that contains no duplicates (original not modified)
-   * @param  {array} array   Original reference array
-   * @return {array}         New array with no duplicates
-   */
-  function arrayUnique(array) {
-    var a = [];
-    for (var i = 0, l = array.length; i < l; i++) {
-      if (a.indexOf(array[i]) === -1) {
-        a.push(array[i]);
-      }
-    }
-    return a;
   }
 
   var jsonLogic = {};
@@ -65,17 +48,13 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       return c === undefined ? a <= b : a <= b && b <= c;
     },
     '!!': function(a) {
-      return jsonLogic.truthy(a);
+      return truthy(a);
     },
     '!': function(a) {
-      return !jsonLogic.truthy(a);
+      return !truthy(a);
     },
     '%': function(a, b) {
       return a % b;
-    },
-    log: function(a) {
-      console.log(a);
-      return a;
     },
     in: function(a, b) {
       if (!b || typeof b.indexOf === 'undefined') return false;
@@ -186,11 +165,11 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     },
     // OnSign specific operators
     '><': function(loc, region) {
-      // Checks if a location object is inside a georegion object
+      // Checks if a coordinate is inside a georegion object
       if (region.path) {
-        return jsonLogic.isWithinPolygon_(region, loc);
+        return isWithinPolygon(loc, region);
       } else {
-        return jsonLogic.isWithinCircle_(region, loc);
+        return isWithinCircle(loc, region);
       }
     },
     '*=': function(a, b) {
@@ -203,7 +182,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     }
   };
 
-  jsonLogic.isWithinPolygon_ = function(polygon, point) {
+  function isWithinPolygon(point, polygon) {
     if (!polygon.path) return false;
     // The array representing the polygon represents each point with an array.
     // We map it to use `latitude` and `longitude` instead.
@@ -216,13 +195,13 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       // When we reach the last iteration, we need to connect it back to the first point.
       var b = mappedPolygon[(i+1 == mappedPolygon.length) ? 0 : i+1];
       // Check if the virtual ray intercepts this side of the polygon
-      if (this.rayCrossesSegment_(point, a, b)) crossings++;
+      if (rayCrossesSegment(point, a, b)) crossings++;
     }
     // If the number of crossings is odd, then the point is inside the polygon.
     return (crossings % 2 == 1);
-  };
+  }
 
-  jsonLogic.isWithinCircle_ = function(circle, point) {
+  function isWithinCircle(point, circle) {
     if (!circle || !point) return false;
 
     // This method uses the [Haversine formula](http://en.wikipedia.org/wiki/Haversine_formula).
@@ -238,9 +217,9 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     var distance = R * c * 1000;
 
     return (distance <= circle.radius);
-  };
+  }
 
-  jsonLogic.rayCrossesSegment_ = function(point, a, b) {
+  function rayCrossesSegment(point, a, b) {
     if (!point || !a || !b) return false;
 
     var px = point.longitude;
@@ -268,36 +247,28 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     var blue = (ax != px) ? ((py - ay) / (px - ax)) : Infinity;
 
     return (blue >= red);
-  };
+  }
 
-  jsonLogic.is_logic = function(logic) {
+  function is_logic(logic) {
     return (
       typeof logic === 'object' && // An object
       logic !== null && // but not null
       !Array.isArray(logic) && // and not an array
       Object.keys(logic).length === 1 // with exactly one key
     );
-  };
+  }
 
   /*
   This helper will defer to the JsonLogic spec as a tie-breaker when different language interpreters define different behavior for the truthiness of primitives.  E.g., PHP considers empty arrays to be falsy, but Javascript considers them to be truthy. JsonLogic, as an ecosystem, needs one consistent answer.
 
   Spec and rationale here: http://jsonlogic.com/truthy
   */
-  jsonLogic.truthy = function(value) {
+  function truthy(value) {
     if (Array.isArray(value) && value.length === 0) {
       return false;
     }
     return !!value;
-  };
-
-  jsonLogic.get_operator = function(logic) {
-    return Object.keys(logic)[0];
-  };
-
-  jsonLogic.get_values = function(logic) {
-    return logic[jsonLogic.get_operator(logic)];
-  };
+  }
 
   jsonLogic.apply = function(logic, data) {
     // Does this array contain logic? Only one way to find out.
@@ -307,13 +278,13 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       });
     }
     // You've recursed to a primitive, stop!
-    if (!jsonLogic.is_logic(logic)) {
+    if (!is_logic(logic)) {
       return logic;
     }
 
     data = data || {};
 
-    var op = jsonLogic.get_operator(logic);
+    var op = Object.keys(logic)[0];
     var values = logic[op];
     var i;
     var current;
@@ -340,7 +311,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       given 0 parameters, return NULL (not great practice, but there was no Else)
       */
       for (i = 0; i < values.length - 1; i += 2) {
-        if (jsonLogic.truthy(jsonLogic.apply(values[i], data))) {
+        if (truthy(jsonLogic.apply(values[i], data))) {
           return jsonLogic.apply(values[i + 1], data);
         }
       }
@@ -350,7 +321,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       // Return first falsy, or last
       for (i = 0; i < values.length; i += 1) {
         current = jsonLogic.apply(values[i], data);
-        if (!jsonLogic.truthy(current)) {
+        if (!truthy(current)) {
           return current;
         }
       }
@@ -359,7 +330,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       // Return first truthy, or last
       for (i = 0; i < values.length; i += 1) {
         current = jsonLogic.apply(values[i], data);
-        if (jsonLogic.truthy(current)) {
+        if (truthy(current)) {
           return current;
         }
       }
@@ -375,7 +346,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       // that return truthy when passed to the logic in the second argument.
       // For parity with JavaScript, reindex the returned array
       return scopedData.filter(function(datum) {
-        return jsonLogic.truthy(jsonLogic.apply(scopedLogic, datum));
+        return truthy(jsonLogic.apply(scopedLogic, datum));
       });
     } else if (op === 'map') {
       scopedData = jsonLogic.apply(values[0], data);
@@ -408,7 +379,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
         return false;
       }
       for (i = 0; i < scopedData.length; i += 1) {
-        if (!jsonLogic.truthy(jsonLogic.apply(scopedLogic, scopedData[i]))) {
+        if (!truthy(jsonLogic.apply(scopedLogic, scopedData[i]))) {
           return false; // First falsy, short circuit
         }
       }
@@ -447,95 +418,6 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     }
 
     throw new Error('Unrecognized operation ' + op);
-  };
-
-  jsonLogic.uses_data = function(logic) {
-    var collection = [];
-
-    if (jsonLogic.is_logic(logic)) {
-      var op = jsonLogic.get_operator(logic);
-      var values = logic[op];
-
-      if (!Array.isArray(values)) {
-        values = [values];
-      }
-
-      if (op === 'var') {
-        // This doesn't cover the case where the arg to var is itself a rule.
-        collection.push(values[0]);
-      } else {
-        // Recursion!
-        values.map(function(val) {
-          collection.push.apply(collection, jsonLogic.uses_data(val));
-        });
-      }
-    }
-
-    return arrayUnique(collection);
-  };
-
-  jsonLogic.add_operation = function(name, code) {
-    operations[name] = code;
-  };
-
-  jsonLogic.rm_operation = function(name) {
-    delete operations[name];
-  };
-
-  jsonLogic.rule_like = function(rule, pattern) {
-    // console.log("Is ". JSON.stringify(rule) . " like " . JSON.stringify(pattern) . "?");
-    if (pattern === rule) {
-      return true;
-    } // TODO : Deep object equivalency?
-    if (pattern === '@') {
-      return true;
-    } // Wildcard!
-    if (pattern === 'number') {
-      return typeof rule === 'number';
-    }
-    if (pattern === 'string') {
-      return typeof rule === 'string';
-    }
-    if (pattern === 'array') {
-      // !logic test might be superfluous in JavaScript
-      return Array.isArray(rule) && !jsonLogic.is_logic(rule);
-    }
-
-    if (jsonLogic.is_logic(pattern)) {
-      if (jsonLogic.is_logic(rule)) {
-        var pattern_op = jsonLogic.get_operator(pattern);
-        var rule_op = jsonLogic.get_operator(rule);
-
-        if (pattern_op === '@' || pattern_op === rule_op) {
-          // echo "\nOperators match, go deeper\n";
-          return jsonLogic.rule_like(jsonLogic.get_values(rule, false), jsonLogic.get_values(pattern, false));
-        }
-      }
-      return false; // pattern is logic, rule isn't, can't be eq
-    }
-
-    if (Array.isArray(pattern)) {
-      if (Array.isArray(rule)) {
-        if (pattern.length !== rule.length) {
-          return false;
-        }
-        /*
-          Note, array order MATTERS, because we're using this array test logic to consider arguments, where order can matter. (e.g., + is commutative, but '-' or 'if' or 'var' are NOT)
-        */
-        for (var i = 0; i < pattern.length; i += 1) {
-          // If any fail, we fail
-          if (!jsonLogic.rule_like(rule[i], pattern[i])) {
-            return false;
-          }
-        }
-        return true; // If they *all* passed, we pass
-      } else {
-        return false; // Pattern is array, rule isn't
-      }
-    }
-
-    // Not logic, not array, not a === match for rule.
-    return false;
   };
 
   return jsonLogic;

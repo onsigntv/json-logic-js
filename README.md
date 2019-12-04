@@ -1,18 +1,10 @@
-# json-logic-js
+# OnSign json-logic-js
 
 This parser accepts [JsonLogic](http://jsonlogic.com) rules and executes them in JavaScript.
 
 The JsonLogic format is designed to allow you to share rules (logic) between front-end and back-end code (regardless of language difference), even to store logic along with a record in a database.  JsonLogic is documented extensively at [JsonLogic.com](http://jsonlogic.com), including examples of every [supported operation](http://jsonlogic.com/operations.html) and a place to [try out rules in your browser](http://jsonlogic.com/play.html).
 
-The same format can also be executed in PHP by the library [json-logic-php](https://github.com/jwadhams/json-logic-php/)
-
 ## Installation
-
-To parse JsonLogic rules in a JavaScript frontend, install this library is via [Bower](http://bower.io/):
-
-```bash
-bower install --save json-logic-js
-```
 
 To parse JsonLogic rules in a JavaScript backend (like Node.js), install this library via [NPM](https://www.npmjs.com/):
 
@@ -126,8 +118,14 @@ This library makes use of `Array.map` and `Array.reduce`, so it's not *exactly* 
 
 If you want to use JsonLogic *and* support deprecated browsers, you could easily use [BabelJS's polyfill](https://babeljs.io/docs/usage/polyfill/) or directly incorporate the polyfills documented on MDN for [map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) and [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce).
 
-## Customization
+## Differences from orignal json-logic
 
-It's not possible to include everyone's excellent ideas without the core library bloating, bringing in a ton of outside dependencies, or occasionally causing use case conflicts (some people need to safely execute untrusted rules, some people need to change outside state).
+This repository removes a lot of unneded code and add some extra specific operators
 
-Check out the [documentation for adding custom operations](http://jsonlogic.com/add_operation.html) and be sure to stop by the [Wiki page of custom operations](https://github.com/jwadhams/json-logic-js/wiki/Custom-Operations) to see if someone has already solved your problem or to share your solution.
+The new operators are:
+
+- `><`: Receives a cooridnate and a region object, and checks wheter the coordinate is between the region.
+- `*=`: Checks whether the first argument starts with the second argument
+- `=*`: Checks whether the first argument ends with the second argument
+
+We also added some extra checks to guard ourselves against null data.
