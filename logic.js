@@ -270,6 +270,9 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     if (Array.isArray(value) && value.length === 0) {
       return false;
     }
+    if (typeof value === 'object' && !!value && Object.keys(value).length === 0) {
+      return false;
+    }
     return !!value;
   }
 

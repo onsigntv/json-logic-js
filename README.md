@@ -1,4 +1,6 @@
-# OnSign json-logic-js
+# OnSign TV Custom json-logic-js
+
+This is a fork of the original repo at <https://github.com/jwadhams/json-logic-js>. Check [Differences from original json-logic-js](#differences-from-original-json-logic-js) to see what we changed.
 
 This parser accepts [JsonLogic](http://jsonlogic.com) rules and executes them in JavaScript.
 
@@ -9,7 +11,7 @@ The JsonLogic format is designed to allow you to share rules (logic) between fro
 To parse JsonLogic rules in a JavaScript backend (like Node.js), install this library via [NPM](https://www.npmjs.com/):
 
 ```bash
-npm install json-logic-js
+npm install --save onsigntv/json-logic-js#master
 ```
 
 Note that this project uses a [module loader](http://ricostacruz.com/cheatsheets/umdjs.html) that also makes it suitable for RequireJS projects.
@@ -17,7 +19,7 @@ Note that this project uses a [module loader](http://ricostacruz.com/cheatsheets
 If that doesn't suit you, and you want to manage updates yourself, the entire library is self-contained in `logic.js` and you can download it straight into your project as you see fit.
 
 ```bash
-curl -O https://raw.githubusercontent.com/jwadhams/json-logic-js/master/logic.js
+curl -O https://raw.githubusercontent.com/onsigntv/json-logic-js/master/logic.js
 ```
 
 ## Examples
@@ -118,15 +120,15 @@ This library makes use of `Array.map` and `Array.reduce`, so it's not *exactly* 
 
 If you want to use JsonLogic *and* support deprecated browsers, you could easily use [BabelJS's polyfill](https://babeljs.io/docs/usage/polyfill/) or directly incorporate the polyfills documented on MDN for [map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) and [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce).
 
-## Differences from orignal json-logic
+## Differences from original json-logic-js
 
-This repository removes a lot of unneded code and add some extra specific operators, besides doing some overrall improvements to the code.
+This repository removes a lot of unneeded code and add some extra specific operators, besides doing some overall improvements to the code.
 
 ### New Operators
 
 The new operators are:
 
-- `><`: Receives a cooridnate and a region object, and checks wheter the coordinate is between the region.
+- `><`: Receives a geocoordinate and a region object, and checks whether the coordinate is inside the region.
 - `*=`: Checks whether the first argument starts with the second argument
 - `=*`: Checks whether the first argument ends with the second argument
 
@@ -137,6 +139,7 @@ This repo makes sure that:
 
 - When doing comparisons with `null`, we will always return `false`
 - When doing operations with `null`, we will always consider null as `0`
-- `0` will be returned when a value is divided by `0`. This matches well with the second change
-- All operations now support an arbitrary ammount of arguments (excluding `%`)
+- `0` will be returned when a value is divided by `0`. This matches well with the second change.
+- All operations now support an arbitrary amount of arguments (excluding `%`)
 - Calling operations with only 1 value returns that value. Ex.: `{"-": [1]} === 1` (excluding `%`)
+- An empty object `{}` is considered false
