@@ -273,6 +273,8 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     return !!value;
   }
 
+  jsonLogic.truthy = truthy;
+
   jsonLogic.apply = function(logic, data) {
     // Does this array contain logic? Only one way to find out.
     if (Array.isArray(logic)) {
