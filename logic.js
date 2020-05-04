@@ -75,9 +75,13 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       return String(source).substr(start, end);
     },
     '+': function() {
-      return Array.prototype.reduce.call(arguments, function(a, b) {
-        return parseFloat(+a, 10) + parseFloat(+b, 10);
-      }, 0);
+      return Array.prototype.reduce.call(
+        arguments,
+        function(a, b) {
+          return parseFloat(+a, 10) + parseFloat(+b, 10);
+        },
+        0
+      );
     },
     '*': function() {
       return Array.prototype.reduce.call(arguments, function(a, b) {
@@ -163,7 +167,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     method: function(obj, method, args) {
       return obj[method].apply(obj, args);
     },
-    // OnSign specific operators
+    // OnSign TV specific operators
     '><': function(loc, region) {
       // Checks if a coordinate is inside a georegion object
       if (loc === null || region === null) return false;
@@ -189,19 +193,21 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     if (!polygon.path) return false;
     // The array representing the polygon represents each point with an array.
     // We map it to use `latitude` and `longitude` instead.
-    var mappedPolygon = polygon.path.map(function(point) {return {latitude: point[0], longitude: point[1]};});
+    var mappedPolygon = polygon.path.map(function(point) {
+      return { latitude: point[0], longitude: point[1] };
+    });
 
     var crossings = 0;
     for (var i = 0; i < mappedPolygon.length; i++) {
       // Build a rect with the next two points of the polygon
       var a = mappedPolygon[i];
       // When we reach the last iteration, we need to connect it back to the first point.
-      var b = mappedPolygon[(i+1 == mappedPolygon.length) ? 0 : i+1];
+      var b = mappedPolygon[i + 1 == mappedPolygon.length ? 0 : i + 1];
       // Check if the virtual ray intercepts this side of the polygon
       if (rayCrossesSegment(point, a, b)) crossings++;
     }
     // If the number of crossings is odd, then the point is inside the polygon.
-    return (crossings % 2 == 1);
+    return crossings % 2 == 1;
   }
 
   function isWithinCircle(point, circle) {
@@ -219,7 +225,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     // Get the distance in `meters`
     var distance = R * c * 1000;
 
-    return (distance <= circle.radius);
+    return distance <= circle.radius;
   }
 
   function rayCrossesSegment(point, a, b) {
@@ -243,13 +249,13 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     if (bx < 0) bx += 360;
 
     if (py == ay || py == by) py += 0.00000001;
-    if ((py > by || py < ay) || (px >= Math.max(ax, bx))) return false;
+    if (py > by || py < ay || px >= Math.max(ax, bx)) return false;
     if (px < Math.min(ax, bx)) return true;
 
-    var red = (ax != bx) ? ((by - ay) / (bx - ax)) : Infinity;
-    var blue = (ax != px) ? ((py - ay) / (px - ax)) : Infinity;
+    var red = ax != bx ? (by - ay) / (bx - ax) : Infinity;
+    var blue = ax != px ? (py - ay) / (px - ax) : Infinity;
 
-    return (blue >= red);
+    return blue >= red;
   }
 
   function is_logic(logic) {
