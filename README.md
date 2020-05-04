@@ -128,7 +128,12 @@ This repository removes a lot of unneeded code and add some extra specific opera
 
 The new operators are:
 
-- `><`: Receives a geocoordinate and a region object, and checks whether the coordinate is inside the region.
+- `><`: Receives a geo-coordinate and a region object, and checks whether the coordinate is inside the region.
+- `>t<`: Receives a point, in virtual coordinates from 0 to 100_000 and a rectangle array of [x, y, width, height], to determine wether the point
+  is within the rectangle. Third parameter is optional for mapping the rectangle to a different area of the plane. Returns a boolean.
+- `tsrep`: Receives the current unix timestamp, a timestamp from the start of the day and a repetition value to determine wether the current
+  timestamp is a repeating point within the day. Returns a boolean.
+- `match`: Checks whether the first parameter matches a regular expression in the second parameter. Returns the match array or `null`.
 - `*=`: Checks whether the first argument starts with the second argument
 - `=*`: Checks whether the first argument ends with the second argument
 

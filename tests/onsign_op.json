@@ -106,5 +106,53 @@
     [{"=*": ["This is a sample test", "This is a"]}, {}, false],
     [{"=*": ["This is a sample test", ""]}, {}, true],
     [{"=*": ["😀 emoji test 😀", "test 😀"]}, {}, true],
+    "Touch in rect test",
+    [
+      {">t<": [
+        {"var": "_touch"},
+        [0, 0, 100000, 75000],
+        {"var": "_playing.nnfnBNJ"}
+      ]},
+      {"_touch": [50000, 50000], "_playing": {"nnfnBNJ": [{"rect": [0, 0, 100000, 75000]}]}},
+      true
+    ],
+    [
+      {">t<": [
+        {"var": "_touch"},
+        [0, 0, 100000, 100000]
+      ]},
+      {"_touch": [50000, 50000], "_playing": {"nnfnBNJ": [{"rect": [0, 0, 100000, 75000]}]}},
+      true
+    ],
+    [
+      {">t<": [
+        {"var": "_touch"},
+        [0, 0, 100000, 75111],
+        {"var": "_playing.nnfnBNJ"}
+      ]},
+      {"_touch": [50000, 50000], "_playing": {}},
+      false
+    ],
+    [
+      {">t<": [
+        {"var": "_touch"},
+        [0, 0, 100000, 75000],
+        {"var": "_playing.nnfnBNJ"}
+      ]},
+      {"_touch": [99999, 99999], "_playing": {"nnfnBNJ": [{"rect": [0, 0, 100000, 75000]}]}},
+      false
+    ],
+    "Time Repetition Tests",
+    [{"tsrep": [{"var": "_ts"}, 37200, 600]}, {"_ts": 1588598400 }, true],
+    [{"tsrep": [{"var": "_ts"}, 37200, 600]}, {"_ts": 1588598435 }, false],
+    [{"tsrep": [{"var": "_ts"}, 37200, 60]}, {"_ts": 1588598460 }, true],
+    [{"tsrep": [{"var": "_ts"}, 0, 60]}, {"_ts": 1588598460 }, true],
+    "Match Test",
+    [{"match": [{"var": "_text"}, "A.*"]}, {"_text": "A test" }, ["A test"]],
+    [{"match": [{"var": "_text"}, "A\\s(.*)"]}, {"_text": "A test" }, ["A test", "test"]],
+    [{"match": [{"var": "_text"}, "A.*"]}, {"_text": "a test" }, null],
+    [{"match": [{"var": "_text"}, "A.*", "i"]}, {"_text": "a test" }, ["a test"]],
+    [{"match": [{"var": "_text"}, "A.*", "g"]}, {"_text": "A test" }, ["A test"]],
+    [{"match": [{"var": "_text"}, "A\\s(.*)", "g"]}, {"_text": "A test" }, ["A test"]],
     "EOF"
   ]
