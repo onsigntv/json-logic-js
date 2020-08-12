@@ -225,9 +225,9 @@ http://ricostacruz.com/cheatsheets/umdjs.html
   function isWithinPolygon(point, polygon) {
     if (!polygon.path) return false;
     // The array representing the polygon represents each point with an array.
-    // We map it to use `latitude` and `longitude` instead.
+    // We map it to use `lat` and `lng` instead.
     var mappedPolygon = polygon.path.map(function(point) {
-      return { latitude: point[0], longitude: point[1] };
+      return { lat: point[0], lng: point[1] };
     });
 
     var crossings = 0;
@@ -248,33 +248,33 @@ http://ricostacruz.com/cheatsheets/umdjs.html
 
     // This method uses the [Haversine formula](http://en.wikipedia.org/wiki/Haversine_formula).
     var R = 6371;
-    var dLat = (point.latitude - circle.latitude) * (Math.PI / 180);
-    var dLon = (point.longitude - circle.longitude) * (Math.PI / 180);
+    var dLat = (point.lat - circle.lat) * (Math.PI / 180);
+    var dLon = (point.lng - circle.lng) * (Math.PI / 180);
     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2);
-    a += Math.cos(circle.latitude * (Math.PI / 180)) * Math.cos(point.latitude * (Math.PI / 180));
+    a += Math.cos(circle.lat * (Math.PI / 180)) * Math.cos(point.lat * (Math.PI / 180));
     a *= Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     // Get the distance in `meters`
     var distance = R * c * 1000;
 
-    return distance <= circle.radius;
+    return distance <= circle.rad;
   }
 
   function rayCrossesSegment(point, a, b) {
     if (!point || !a || !b) return false;
 
-    var px = point.longitude;
-    var py = point.latitude;
-    var ax = a.longitude;
-    var ay = a.latitude;
-    var bx = b.longitude;
-    var by = b.latitude;
+    var px = point.lng;
+    var py = point.lat;
+    var ax = a.lng;
+    var ay = a.lat;
+    var bx = b.lng;
+    var by = b.lat;
     if (ay > by) {
-      ax = b.longitude;
-      ay = b.latitude;
-      bx = a.longitude;
-      by = a.latitude;
+      ax = b.lng;
+      ay = b.lat;
+      bx = a.lng;
+      by = a.lat;
     }
 
     if (px < 0) px += 360;
