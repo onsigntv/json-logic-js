@@ -168,14 +168,20 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       return obj[method].apply(obj, args);
     },
     // OnSign TV specific operators
-    '><': function(loc, region) {
+    '><': function(loc, regions) {
+      // Checks if a coordinate is inside a georegion object
+      if (loc === null || regions === null || (Array.isArray(regions) && regions.length === 0)) return false;
+      for (var i = 0; i < regions.length; i++) {
+        if (isWithinRegion(loc, regions[i])) {
+          return true;
+        }
+      }
+      return false;
+    },
+    '>.<': function(loc, region) {
       // Checks if a coordinate is inside a georegion object
       if (loc === null || region === null) return false;
-      if (region.path) {
-        return isWithinPolygon(loc, region);
-      } else {
-        return isWithinCircle(loc, region);
-      }
+      return isWithinRegion(loc, region);
     },
     '*=': function(a, b) {
       // Startswith
@@ -221,6 +227,14 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       return str.match(new RegExp(regexp, flag));
     }
   };
+
+  function isWithinRegion(point, region) {
+    if (region.path) {
+      return isWithinPolygon(point, region);
+    } else {
+      return isWithinCircle(point, region);
+    }
+  }
 
   function isWithinPolygon(point, polygon) {
     if (!polygon.path) return false;
