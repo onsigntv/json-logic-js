@@ -156,6 +156,15 @@
       {"_touch": [99999, 99999], "_playing": {"nnfnBNJ": [{"rect": [0, 0, 100000, 75000]}]}},
       false
     ],
+    [
+      {">t<": [
+        {"var": "_touch"},
+        [50000, 0, 50000, 100000],
+        {"var": "_playing.Blf6r8x"}
+      ]},
+      {"_touch": [0, 0], "_playing": {"Blf6r8x": [{"rect": [0, 0, 100000, 100000]}]}},
+      false
+    ],
     "Time Repetition Tests",
     [{"tsrep": [{"var": "_ts"}, 37200, 600]}, {"_ts": 1588598400 }, true],
     [{"tsrep": [{"var": "_ts"}, 37200, 600]}, {"_ts": 1588598435 }, false],

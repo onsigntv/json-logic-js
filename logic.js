@@ -206,8 +206,8 @@ http://ricostacruz.com/cheatsheets/umdjs.html
         for (var i = 0; i < refs.length; i++) {
           var ref_rect = refs[i].rect;
           if (Array.isArray(ref_rect) && ref_rect.length === 4) {
-            var x = ref_rect[0] + (ref_rect[0] * rect[0]) / 100000;
-            var y = ref_rect[1] + (ref_rect[1] * rect[1]) / 100000;
+            var x = ref_rect[0] + (ref_rect[2] * rect[0]) / 100000;
+            var y = ref_rect[1] + (ref_rect[3] * rect[1]) / 100000;
             var w = (ref_rect[2] * rect[2]) / 100000;
             var h = (ref_rect[3] * rect[3]) / 100000;
             if (point[0] >= x && point[0] <= x + w && point[1] >= y && point[1] <= y + h) {
