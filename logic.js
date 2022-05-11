@@ -265,8 +265,11 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     var dLat = (point.lat - circle.lat) * (Math.PI / 180);
     var dLon = (point.lng - circle.lng) * (Math.PI / 180);
     var a = Math.sin(dLat / 2) * Math.sin(dLat / 2);
-    a += Math.cos(circle.lat * (Math.PI / 180)) * Math.cos(point.lat * (Math.PI / 180));
-    a *= Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    a +=
+      Math.cos(circle.lat * (Math.PI / 180)) *
+      Math.cos(point.lat * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
 
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     // Get the distance in `meters`
