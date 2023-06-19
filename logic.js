@@ -100,9 +100,11 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       });
     },
     min: function() {
+      if (arguments[0] === null || arguments[0] === undefined) return null;
       return Math.min.apply(this, arguments);
     },
     max: function() {
+      if (arguments[0] === null || arguments[0] === undefined) return null;
       return Math.max.apply(this, arguments);
     },
     merge: function() {

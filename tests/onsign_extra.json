@@ -79,8 +79,8 @@
     [{"none": [null, {">": [{"var": ""}, 1]}]}, {}, true],
     [{"none": [null, {"<=": [{"var": ""}, 1]}]}, {}, true],
 
-    [{"max": null}, {}, 0],
-    [{"min": null}, {}, 0],
+    [{"max": null}, {}, null],
+    [{"min": null}, {}, null],
 
     [
         {"><": [null, {"var": "geo"}]},
