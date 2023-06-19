@@ -440,7 +440,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       scopedData = jsonLogic.apply(values[0], data);
       scopedLogic = values[1];
       // All of an empty set is false. Note, some and none have correct fallback after the for loop
-      if (!scopedData.length) {
+      if (!scopedData || !scopedData.length) {
         return false;
       }
       for (i = 0; i < scopedData.length; i += 1) {
@@ -451,7 +451,8 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       return true; // All were truthy
     } else if (op === 'none') {
       filtered = jsonLogic.apply({ filter: values }, data);
-      return filtered.length === 0;
+      // Ensure we propagate 'false' when target is 'falsy', which does not include the empty array
+      return filtered.length === 0 && !!values[0];
     } else if (op === 'some') {
       filtered = jsonLogic.apply({ filter: values }, data);
       return filtered.length > 0;
