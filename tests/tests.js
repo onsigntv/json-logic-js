@@ -50,30 +50,3 @@ QUnit.test('Bad operator', function(assert) {
 QUnit.test('edge cases', function(assert) {
   assert.equal(jsonLogic.apply(), undefined, 'Called with no arguments');
 });
-
-QUnit.test('Expanding functionality with method', function(assert) {
-  // Data contains a real object with methods and local state
-  var a = {
-    count: 0,
-    increment: function() {
-      return (this.count += 1);
-    },
-    add: function(b) {
-      return (this.count += b);
-    }
-  };
-
-  // Look up "a" in data, and run the increment method on it with no args.
-  assert.equal(
-    jsonLogic.apply({ method: [{ var: 'a' }, 'increment'] }, { a: a }),
-    1 // Happy return value
-  );
-  assert.equal(a.count, 1); // Happy state change
-
-  // Run the add method with an argument
-  assert.equal(
-    jsonLogic.apply({ method: [{ var: 'a' }, 'add', [41]] }, { a: a }),
-    42 // Happy return value
-  );
-  assert.equal(a.count, 42); // Happy state change
-});

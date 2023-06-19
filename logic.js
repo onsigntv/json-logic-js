@@ -122,7 +122,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       }
       var sub_props = String(a).split('.');
       for (var i = 0; i < sub_props.length; i++) {
-        if (data === null) {
+        if (data === null || data === undefined) {
           return not_found;
         }
         // Descending into data
@@ -163,9 +163,6 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       } else {
         return are_missing;
       }
-    },
-    method: function(obj, method, args) {
-      return obj[method].apply(obj, args);
     },
     // OnSign TV specific operators
     '><': function(loc, regions) {
@@ -438,11 +435,10 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       }, initial);
     } else if (op === 'all') {
       scopedData = jsonLogic.apply(values[0], data);
-      scopedLogic = values[1];
-      // All of an empty set is false. Note, some and none have correct fallback after the for loop
-      if (!scopedData || !scopedData.length) {
+      if (!Array.isArray(scopedData) || scopedData.length === 0) {
         return false;
       }
+      scopedLogic = values[1];
       for (i = 0; i < scopedData.length; i += 1) {
         if (!truthy(jsonLogic.apply(scopedLogic, scopedData[i]))) {
           return false; // First falsy, short circuit
@@ -450,12 +446,29 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       }
       return true; // All were truthy
     } else if (op === 'none') {
-      filtered = jsonLogic.apply({ filter: values }, data);
-      // Ensure we propagate 'false' when target is 'falsy', which does not include the empty array
-      return filtered.length === 0 && !!values[0];
+      scopedData = jsonLogic.apply(values[0], data);
+      if (!Array.isArray(scopedData) || scopedData.length === 0) {
+        return true;
+      }
+      scopedLogic = values[1];
+      for (i = 0; i < scopedData.length; i+=1) {
+        if (jsonLogic.truthy(jsonLogic.apply(scopedLogic, scopedData[i]) )) {
+          return false; // First truthy, short circuit
+        }
+      }
+      return true; // None were truthy
     } else if (op === 'some') {
-      filtered = jsonLogic.apply({ filter: values }, data);
-      return filtered.length > 0;
+      scopedData = jsonLogic.apply(values[0], data);
+      if (!Array.isArray(scopedData) || scopedData.length === 0) {
+        return false;
+      }
+      scopedLogic = values[1];
+      for (i = 0; i < scopedData.length; i+=1) {
+        if (jsonLogic.truthy(jsonLogic.apply(scopedLogic, scopedData[i]) )) {
+          return true; // First truthy, short circuit
+        }
+      }
+      return false; // None were truthy
     }
 
     // Everyone else gets immediate depth-first recursion
@@ -466,7 +479,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     // The operation is called with "data" bound to its "this" and "values" passed as arguments.
     // Structured commands like % or > can name formal arguments while flexible commands (like missing or merge) can operate on the pseudo-array arguments
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments
-    if (typeof operations[op] === 'function') {
+    if (Object.prototype.hasOwnProperty.call(operations, op) && typeof operations[op] === 'function') {
       return operations[op].apply(data, values);
     } else if (op.indexOf('.') > 0) {
       // Contains a dot, and not in the 0th position
@@ -474,10 +487,10 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       var operation = operations;
       for (i = 0; i < sub_ops.length; i++) {
         // Descending into operations
-        operation = operation[sub_ops[i]];
-        if (operation === undefined) {
+        if (!Object.prototype.hasOwnProperty.call(operation, sub_ops[i])) {
           throw new Error('Unrecognized operation ' + op + ' (failed at ' + sub_ops.slice(0, i + 1).join('.') + ')');
         }
+        operation = operation[sub_ops[i]];
       }
 
       return operation.apply(data, values);

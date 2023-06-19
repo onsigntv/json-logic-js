@@ -76,8 +76,8 @@
     [{"all": [null, {"<=": [{"var": ""}, 1]}]}, {}, false],
     [{"some": [null, {">": [{"var": ""}, 1]}]}, {}, false],
     [{"some": [null, {"<=": [{"var": ""}, 1]}]}, {}, false],
-    [{"none": [null, {">": [{"var": ""}, 1]}]}, {}, false],
-    [{"none": [null, {"<=": [{"var": ""}, 1]}]}, {}, false],
+    [{"none": [null, {">": [{"var": ""}, 1]}]}, {}, true],
+    [{"none": [null, {"<=": [{"var": ""}, 1]}]}, {}, true],
 
     [{"max": null}, {}, 0],
     [{"min": null}, {}, 0],
