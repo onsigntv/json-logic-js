@@ -3,7 +3,7 @@
 Using a Universal Module Loader that should be browser, require, and AMD friendly
 http://ricostacruz.com/cheatsheets/umdjs.html
 */
-(function(root, factory) {
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
   } else if (typeof exports === 'object') {
@@ -11,62 +11,62 @@ http://ricostacruz.com/cheatsheets/umdjs.html
   } else {
     root.jsonLogic = factory();
   }
-})(this, function() {
+})(this, function () {
   'use strict';
   if (!Array.isArray) {
-    Array.isArray = function(arg) {
+    Array.isArray = function (arg) {
       return Object.prototype.toString.call(arg) === '[object Array]';
     };
   }
 
   var jsonLogic = {};
   var operations = {
-    '==': function(a, b) {
+    '==': function (a, b) {
       return a == b;
     },
-    '===': function(a, b) {
+    '===': function (a, b) {
       return a === b;
     },
-    '!=': function(a, b) {
+    '!=': function (a, b) {
       return a != b;
     },
-    '!==': function(a, b) {
+    '!==': function (a, b) {
       return a !== b;
     },
-    '>': function(a, b) {
+    '>': function (a, b) {
       if (b === null) return false;
       return a > b;
     },
-    '>=': function(a, b) {
+    '>=': function (a, b) {
       if (b === null) return false;
       return a >= b;
     },
-    '<': function(a, b, c) {
+    '<': function (a, b, c) {
       if (a === null) return false;
       return c === undefined ? a < b : a < b && b < c;
     },
-    '<=': function(a, b, c) {
+    '<=': function (a, b, c) {
       if (a === null) return false;
       return c === undefined ? a <= b : a <= b && b <= c;
     },
-    '!!': function(a) {
+    '!!': function (a) {
       return truthy(a);
     },
-    '!': function(a) {
+    '!': function (a) {
       return !truthy(a);
     },
-    '%': function(a, b) {
+    '%': function (a, b) {
       if (b === null) return 0;
       return a % b;
     },
-    in: function(a, b) {
+    in: function (a, b) {
       if (!b || typeof b.indexOf === 'undefined') return false;
       return b.indexOf(a) !== -1;
     },
-    cat: function() {
+    cat: function () {
       return Array.prototype.join.call(arguments, '');
     },
-    substr: function(source, start, end) {
+    substr: function (source, start, end) {
       if (end < 0) {
         // JavaScript doesn't support negative end, this emulates PHP behavior
         var temp = String(source).substr(start);
@@ -74,49 +74,49 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       }
       return String(source).substr(start, end);
     },
-    '+': function() {
+    '+': function () {
       return Array.prototype.reduce.call(
         arguments,
-        function(a, b) {
+        function (a, b) {
           return parseFloat(+a, 10) + parseFloat(+b, 10);
         },
         0
       );
     },
-    '*': function() {
-      return Array.prototype.reduce.call(arguments, function(a, b) {
+    '*': function () {
+      return Array.prototype.reduce.call(arguments, function (a, b) {
         return parseFloat(+a, 10) * parseFloat(+b, 10);
       });
     },
-    '-': function() {
-      return Array.prototype.reduce.call(arguments, function(a, b) {
+    '-': function () {
+      return Array.prototype.reduce.call(arguments, function (a, b) {
         return parseFloat(+a, 10) - parseFloat(+b, 10);
       });
     },
-    '/': function() {
-      return Array.prototype.reduce.call(arguments, function(a, b) {
+    '/': function () {
+      return Array.prototype.reduce.call(arguments, function (a, b) {
         if (b === null) return 0;
         return parseFloat(+a, 10) / parseFloat(+b, 10);
       });
     },
-    min: function() {
+    min: function () {
       if (arguments[0] === null || arguments[0] === undefined) return null;
       return Math.min.apply(this, arguments);
     },
-    max: function() {
+    max: function () {
       if (arguments[0] === null || arguments[0] === undefined) return null;
       return Math.max.apply(this, arguments);
     },
-    merge: function() {
+    merge: function () {
       return Array.prototype.reduce.call(
         arguments,
-        function(a, b) {
+        function (a, b) {
           return a.concat(b);
         },
         []
       );
     },
-    var: function(a, b) {
+    var: function (a, b) {
       var not_found = b === undefined ? null : b;
       var data = this;
       if (typeof a === 'undefined' || a === '' || a === null) {
@@ -135,7 +135,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       }
       return data;
     },
-    missing: function() {
+    missing: function () {
       /*
       Missing can receive many keys as many arguments, like {"missing:[1,2]}
       Missing can also receive *one* argument that is an array of keys,
@@ -156,7 +156,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
 
       return missing;
     },
-    missing_some: function(need_count, options) {
+    missing_some: function (need_count, options) {
       // missing_some takes two arguments, how many (minimum) items must be present, and an array of keys (just like 'missing') to check for presence.
       var are_missing = jsonLogic.apply({ missing: options }, this);
 
@@ -167,9 +167,10 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       }
     },
     // OnSign TV specific operators
-    '><': function(loc, regions) {
+    '><': function (loc, regions) {
       // Checks if a coordinate is inside a georegion object
-      if (loc === null || regions === null || (Array.isArray(regions) && regions.length === 0)) return false;
+      if (loc === null || regions === null || (Array.isArray(regions) && regions.length === 0))
+        return false;
       for (var i = 0; i < regions.length; i++) {
         if (isWithinRegion(loc, regions[i])) {
           return true;
@@ -177,29 +178,32 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       }
       return false;
     },
-    '>.<': function(loc, region) {
+    '>.<': function (loc, region) {
       // Checks if a coordinate is inside a georegion object
       if (loc === null || region === null) return false;
       return isWithinRegion(loc, region);
     },
-    '*=': function(a, b) {
+    '*=': function (a, b) {
       // Startswith
       if (a === null || b === null) return false;
       return a.substr(0, b.length) === b;
     },
-    '=*': function(a, b) {
+    '=*': function (a, b) {
       // Endswith
       if (a === null || b === null) return false;
       return a.substr(-b.length, b.length) === b;
     },
-    '>t<': function(point, rect, refs) {
+    '>t<': function (point, rect, refs) {
       // Checks if a point happens withing a rectangle, optionally distorted by refs.
       if (!(Array.isArray(point) && point.length === 2)) return false;
       if (!(Array.isArray(rect) && rect.length === 4)) return false;
 
       if (refs === undefined) {
         return (
-          point[0] >= rect[0] && point[0] <= rect[0] + rect[2] && point[1] >= rect[1] && point[1] <= rect[1] + rect[3]
+          point[0] >= rect[0] &&
+          point[0] <= rect[0] + rect[2] &&
+          point[1] >= rect[1] &&
+          point[1] <= rect[1] + rect[3]
         );
       } else if (Array.isArray(refs)) {
         for (var i = 0; i < refs.length; i++) {
@@ -217,11 +221,11 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       }
       return false;
     },
-    tsrep: function(ts, start, freq) {
+    tsrep: function (ts, start, freq) {
       // Checks if current timestamp is a repetition from start every freq. All in seconds.
       return ((ts % 86400) - start) % freq === 0;
     },
-    match: function(str, regexp, flag) {
+    match: function (str, regexp, flag) {
       if (!flag) flag = '';
       return str.match(new RegExp(regexp, flag));
     }
@@ -239,7 +243,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     if (!polygon.path) return false;
     // The array representing the polygon represents each point with an array.
     // We map it to use `lat` and `lng` instead.
-    var mappedPolygon = polygon.path.map(function(point) {
+    var mappedPolygon = polygon.path.map(function (point) {
       return { lat: point[0], lng: point[1] };
     });
 
@@ -333,10 +337,10 @@ http://ricostacruz.com/cheatsheets/umdjs.html
 
   jsonLogic.truthy = truthy;
 
-  jsonLogic.apply = function(logic, data) {
+  jsonLogic.apply = function (logic, data) {
     // Does this array contain logic? Only one way to find out.
     if (Array.isArray(logic)) {
-      return logic.map(function(l) {
+      return logic.map(function (l) {
         return jsonLogic.apply(l, data);
       });
     }
@@ -352,7 +356,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     var values = logic[op];
     var i;
     var current;
-    var scopedLogic, scopedData, filtered, initial;
+    var scopedLogic, scopedData, initial;
 
     // easy syntax for unary operators, like {"var" : "x"} instead of strict {"var" : ["x"]}
     if (!Array.isArray(values)) {
@@ -409,7 +413,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       // Return only the elements from the array in the first argument,
       // that return truthy when passed to the logic in the second argument.
       // For parity with JavaScript, reindex the returned array
-      return scopedData.filter(function(datum) {
+      return scopedData.filter(function (datum) {
         return truthy(jsonLogic.apply(scopedLogic, datum));
       });
     } else if (op === 'map') {
@@ -420,7 +424,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
         return [];
       }
 
-      return scopedData.map(function(datum) {
+      return scopedData.map(function (datum) {
         return jsonLogic.apply(scopedLogic, datum);
       });
     } else if (op === 'reduce') {
@@ -432,7 +436,7 @@ http://ricostacruz.com/cheatsheets/umdjs.html
         return initial;
       }
 
-      return scopedData.reduce(function(accumulator, current) {
+      return scopedData.reduce(function (accumulator, current) {
         return jsonLogic.apply(scopedLogic, { current: current, accumulator: accumulator });
       }, initial);
     } else if (op === 'all') {
@@ -453,8 +457,8 @@ http://ricostacruz.com/cheatsheets/umdjs.html
         return true;
       }
       scopedLogic = values[1];
-      for (i = 0; i < scopedData.length; i+=1) {
-        if (jsonLogic.truthy(jsonLogic.apply(scopedLogic, scopedData[i]) )) {
+      for (i = 0; i < scopedData.length; i += 1) {
+        if (jsonLogic.truthy(jsonLogic.apply(scopedLogic, scopedData[i]))) {
           return false; // First truthy, short circuit
         }
       }
@@ -465,8 +469,8 @@ http://ricostacruz.com/cheatsheets/umdjs.html
         return false;
       }
       scopedLogic = values[1];
-      for (i = 0; i < scopedData.length; i+=1) {
-        if (jsonLogic.truthy(jsonLogic.apply(scopedLogic, scopedData[i]) )) {
+      for (i = 0; i < scopedData.length; i += 1) {
+        if (jsonLogic.truthy(jsonLogic.apply(scopedLogic, scopedData[i]))) {
           return true; // First truthy, short circuit
         }
       }
@@ -474,14 +478,17 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     }
 
     // Everyone else gets immediate depth-first recursion
-    values = values.map(function(val) {
+    values = values.map(function (val) {
       return jsonLogic.apply(val, data);
     });
 
     // The operation is called with "data" bound to its "this" and "values" passed as arguments.
     // Structured commands like % or > can name formal arguments while flexible commands (like missing or merge) can operate on the pseudo-array arguments
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments
-    if (Object.prototype.hasOwnProperty.call(operations, op) && typeof operations[op] === 'function') {
+    if (
+      Object.prototype.hasOwnProperty.call(operations, op) &&
+      typeof operations[op] === 'function'
+    ) {
       return operations[op].apply(data, values);
     } else if (op.indexOf('.') > 0) {
       // Contains a dot, and not in the 0th position
@@ -490,7 +497,13 @@ http://ricostacruz.com/cheatsheets/umdjs.html
       for (i = 0; i < sub_ops.length; i++) {
         // Descending into operations
         if (!Object.prototype.hasOwnProperty.call(operation, sub_ops[i])) {
-          throw new Error('Unrecognized operation ' + op + ' (failed at ' + sub_ops.slice(0, i + 1).join('.') + ')');
+          throw new Error(
+            'Unrecognized operation ' +
+              op +
+              ' (failed at ' +
+              sub_ops.slice(0, i + 1).join('.') +
+              ')'
+          );
         }
         operation = operation[sub_ops[i]];
       }

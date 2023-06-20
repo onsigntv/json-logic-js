@@ -12,6 +12,11 @@
     "gulp": "^4.0.2",
     "qunit": "^1.0.0"
   },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "none",
+    "printWidth": 100
+  },
   "scripts": {
     "lint": "eslint logic.js tests/*.js",
     "test": "gulp test"

@@ -14,7 +14,7 @@ testrunner.run(
     code: '../logic.js',
     tests: 'tests.js'
   },
-  function(err) {
+  function (err) {
     if (err) console.dir(err);
     // console.dir(report);
   }

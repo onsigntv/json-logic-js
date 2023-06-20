@@ -3,8 +3,8 @@ var fs = require('fs');
 var jsonLogic = require('../logic.js');
 var QUnit = require('qunitjs');
 
-var parse_and_iterate = function(local_file, description, runner) {
-  fs.readFile(local_file, 'utf8', function(error, body) {
+var parse_and_iterate = function (local_file, description, runner) {
+  fs.readFile(local_file, 'utf8', function (error, body) {
     var tests;
     try {
       tests = JSON.parse(body);
@@ -13,13 +13,13 @@ var parse_and_iterate = function(local_file, description, runner) {
     }
 
     // Remove comments
-    tests = tests.filter(function(test) {
+    tests = tests.filter(function (test) {
       return typeof test !== 'string';
     });
 
     console.log(`Including ${tests.length} description`);
 
-    QUnit.test(description, function() {
+    QUnit.test(description, function () {
       tests.map(runner);
     });
   });
@@ -33,7 +33,9 @@ function basic_test(test) {
   QUnit.assert.deepEqual(
     jsonLogic.apply(rule, data),
     expected,
-    `jsonLogic.apply(${JSON.stringify(rule)},${JSON.stringify(data)}) === ${JSON.stringify(expected)}`
+    `jsonLogic.apply(${JSON.stringify(rule)},${JSON.stringify(data)}) === ${JSON.stringify(
+      expected
+    )}`
   );
 }
 
@@ -41,12 +43,12 @@ parse_and_iterate('tests.json', 'applies() tests', basic_test);
 parse_and_iterate('onsign_op.json', 'onsign_op() tests', basic_test);
 parse_and_iterate('onsign_extra.json', 'onsign_extra() tests', basic_test);
 
-QUnit.test('Bad operator', function(assert) {
-  assert.throws(function() {
+QUnit.test('Bad operator', function (assert) {
+  assert.throws(function () {
     jsonLogic.apply({ fubar: [] });
   }, /Unrecognized operation/);
 });
 
-QUnit.test('edge cases', function(assert) {
+QUnit.test('edge cases', function (assert) {
   assert.equal(jsonLogic.apply(), undefined, 'Called with no arguments');
 });
