@@ -12,7 +12,6 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     root.jsonLogic = factory();
   }
 })(this, function () {
-  'use strict';
   if (!Array.isArray) {
     Array.isArray = function (arg) {
       return Object.prototype.toString.call(arg) === '[object Array]';
@@ -118,7 +117,8 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     },
     var: function (a, b) {
       var not_found = b === undefined ? null : b;
-      var data = this;
+      // In non-strict mode, primitive `this` values get wrapped into objects; unwrap them.
+      var data = (this instanceof String || this instanceof Number || this instanceof Boolean) ? this.valueOf() : this;
       if (typeof a === 'undefined' || a === '' || a === null) {
         return data;
       }
